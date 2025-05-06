@@ -1,3 +1,5 @@
+"use client";
+import React, { useState, useEffect } from "react";
 // import Image from "next/image";
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
@@ -12,9 +14,33 @@ async function getData() {
   return res.json();
 }
 
-export default async function Home() {
-  const data = await getData();
-  const { 'hero-slides': heroSlides, 'car-models': carModels, features } = data.data.data;
+export default function Home() {
+
+  interface TeslaData {
+    data: {
+      'hero-slides': any[];
+      'car-models': any[];
+      features: any[];
+    };
+  }
+
+  const [teslaData, setTeslaData] = useState<TeslaData | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getData();
+      if (data) {
+        setTeslaData(data.data);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (!teslaData) return null;
+
+ console.log('teslaData...',teslaData.data)
+  const { 'hero-slides': heroSlides, 'car-models': carModels, features } = teslaData?.data || {};
 
   return (
     <>
